@@ -185,7 +185,7 @@ export default function App() {
       {/* Contact */}
       <section className="py-20 px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">Contact Me</h2>
-        <div className="bg-gray-800 p-6 rounded-xl max-w-xl mx-auto">
+        <div className="bg-gray-800 p-6 rounded-xl max-w-xl mx-auto" hidden>
           <div className="font-mono text-green-400 text-left mb-4">
             &gt; Enter your message:
           </div>
