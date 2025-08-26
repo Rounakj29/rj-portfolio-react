@@ -57,7 +57,14 @@ export default function App() {
       projects: [
         {
           name: "InsightGPT",
-          tech: [".NET", "Blazor", "Azure", "OpenAI/LLM APIs", "Semantic Kernel", "Cosmos"],
+          tech: [
+            ".NET",
+            "Blazor",
+            "Azure",
+            "OpenAI/LLM APIs",
+            "Semantic Kernel",
+            "Cosmos",
+          ],
           bullets: [
             "Built a multi-LLM chatbot platform with Azure AD auth and role-based access.",
             "Implemented region-specific content, temperature tuning, and code/chart generation.",
@@ -66,7 +73,15 @@ export default function App() {
         },
         {
           name: "Processor OS Search",
-          tech: [".NET", "Blazor", "SQL Server", "MiniExcel", "JSInterop", "REST APIs", "GitHub CI/CD"],
+          tech: [
+            ".NET",
+            "Blazor",
+            "SQL Server",
+            "MiniExcel",
+            "JSInterop",
+            "REST APIs",
+            "GitHub CI/CD",
+          ],
           bullets: [
             "Automated Excel workflows with template selection and dynamic output generation.",
             "Designed SQL backend and integrated InsightGPT for AI-powered document search.",
@@ -76,13 +91,20 @@ export default function App() {
       ],
     },
     {
-      role: "Cloud Engineer II",
-      company: "Hanu Software Solutions",
+      role: "Cloud Engineer I",
+      company: "Hanu Software Solutions (Acquired by Insight Enterprises)",
       period: "06/2022 – 04/2023",
       projects: [
         {
           name: "Staff & Vendor Operations Dashboard",
-          tech: ["ASP.NET Web API", "Blazor", "Razor Pages", "SQL Server", "Entity Framework", "DataTables.js"],
+          tech: [
+            "ASP.NET Web API",
+            "Blazor",
+            "Razor Pages",
+            "SQL Server",
+            "Entity Framework",
+            "DataTables.js",
+          ],
           bullets: [
             "Developed internal dashboards and B2B service layer for vendor offers via REST APIs.",
             "Migrated legacy SQL to a new relational schema to improve performance.",
@@ -115,12 +137,18 @@ export default function App() {
       gpa: "8.3 GPA",
     },
   ];
-   const projectGridCols =
+  const projectGridCols =
     projects.length === 1
       ? "grid-cols-1"
       : projects.length === 2
       ? "grid-cols-1 md:grid-cols-2"
       : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+      
+  const openLink = (url) => {
+    if (!url || url === "#") return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="bg-gray-900 text-white font-mono scroll-smooth break-words">
       {/* Hero */}
@@ -144,15 +172,27 @@ export default function App() {
             View Projects
           </a>
           <a
-            href="/public/resume.pdf"
-            download
-            className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow-lg"
+            onClick={() => {
+              const link = document.createElement("a");
+              link.href = "/rj-portfolio-react/resume.pdf";
+              link.download = "resume.pdf";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow-lg cursor-pointer"
+            rel="noopener noreferrer"
           >
             Download Resume
           </a>
         </div>
+        {/* On clicking Down move down a section */}
         <ChevronDown
-          className="mt-12 animate-bounce text-purple-400"
+          onClick={() => {
+            const section = document.getElementById("about");
+            section.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="mt-12 animate-bounce text-purple-400 cursor-pointer"
           size={32}
         />
       </section>
@@ -179,27 +219,41 @@ export default function App() {
       {/* Projects */}
       <section id="projects" className="py-20 px-6 bg-gray-800">
         <h2 className="text-4xl font-bold text-center mb-12">Projects</h2>
-     <div className={`grid ${projectGridCols} gap-8 max-w-6xl mx-auto place-items-center`}>
-            {projects.map((proj, idx) => (
+        <div
+          className={`grid ${projectGridCols} gap-8 max-w-6xl mx-auto place-items-center`}
+        >
+          {projects.map((proj, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-      className="bg-gray-700 p-6 rounded-2xl shadow-lg hover:scale-105 transition w-full max-w-md mx-auto"
+              className="bg-gray-700 p-6 rounded-2xl shadow-lg hover:scale-105 transition w-full max-w-md mx-auto"
             >
               <h3 className="text-xl font-bold text-purple-400">{proj.name}</h3>
               <p className="mt-2 text-gray-300">{proj.description}</p>
               <div className="mt-3 text-sm text-blue-300">
                 {proj.stack.join(", ")}
               </div>
-             <div
-                className={`mt-4 flex gap-3 ${proj.github === "#" && proj.live === "#" ? "hidden" : ""}`}
+              <div
+                className={`mt-4 flex gap-3 ${
+                  proj.github === "#" && proj.live === "#" ? "hidden" : ""
+                }`}
               >
-                <a href={proj.github} className={`text-blue-400 hover:underline ${proj.github === "#" ? "hidden" : ""}`}>
+                <a
+                  href={proj.github}
+                  className={`text-blue-400 hover:underline ${
+                    proj.github === "#" ? "hidden" : ""
+                  }`}
+                >
                   GitHub
                 </a>
-                <a href={proj.live} className={`text-green-400 hover:underline ${proj.live === "#" ? "hidden" : ""}`}>
+                <a
+                  href={proj.live}
+                  className={`text-green-400 hover:underline ${
+                    proj.live === "#" ? "hidden" : ""
+                  }`}
+                >
                   Live
                 </a>
               </div>
@@ -222,7 +276,9 @@ export default function App() {
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
-                  <h3 className="text-2xl font-semibold text-purple-400">{job.role}</h3>
+                  <h3 className="text-2xl font-semibold text-purple-400">
+                    {job.role}
+                  </h3>
                   <div className="text-blue-300">{job.company}</div>
                 </div>
                 <div className="text-gray-400">{job.period}</div>
@@ -231,7 +287,9 @@ export default function App() {
                 {job.projects.map((p, pIdx) => (
                   <div key={pIdx}>
                     <div className="font-semibold">{p.name}</div>
-                    <div className="text-sm text-blue-300">{p.tech.join(", ")}</div>
+                    <div className="text-sm text-blue-300">
+                      {p.tech.join(", ")}
+                    </div>
                     <ul className="list-disc list-inside mt-2 text-gray-300 space-y-1">
                       {p.bullets.map((b, bIdx) => (
                         <li key={bIdx}>{b}</li>
@@ -271,9 +329,13 @@ export default function App() {
               whileHover={{ scale: 1.02 }}
               className="bg-gray-700 p-6 rounded-2xl shadow-lg"
             >
-              <div className="text-2xl font-semibold text-purple-400">{ed.degree}</div>
+              <div className="text-2xl font-semibold text-purple-400">
+                {ed.degree}
+              </div>
               <div className="text-blue-300">{ed.school}</div>
-              <div className="text-gray-400 mt-1">{ed.period} • {ed.gpa}</div>
+              <div className="text-gray-400 mt-1">
+                {ed.period} • {ed.gpa}
+              </div>
             </motion.div>
           ))}
         </div>
@@ -325,10 +387,11 @@ export default function App() {
           </a>
         </div>
       </section>
-        {/* Footer */}
-        <footer className="py-6 text-center text-green-400 bg-gray-900">
-          Built with React & Tailwind CSS | &copy; {new Date().getFullYear()} Rounak Jaiswal
-        </footer>
+      {/* Footer */}
+      <footer className="py-6 text-center text-green-400 bg-gray-900">
+        Built with React & Tailwind CSS | &copy; {new Date().getFullYear()}{" "}
+        Rounak Jaiswal
+      </footer>
     </div>
   );
 }
