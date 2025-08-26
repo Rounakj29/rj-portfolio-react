@@ -20,7 +20,7 @@ export default function App() {
       description:
         "A PoC app for AI-powered interview preparation using .NET Core backend and Angular frontend integrated with LLMs.",
       github: "#",
-      live: "#",
+      live: "https://intelli-prep.netlify.app/",
     },
     {
       name: "InsightGPT",
@@ -137,11 +137,13 @@ export default function App() {
               <div className="mt-3 text-sm text-blue-300">
                 {proj.stack.join(", ")}
               </div>
-              <div className="mt-4 flex gap-3">
-                <a href={proj.github} className="text-blue-400 hover:underline">
+             <div
+                className={`mt-4 flex gap-3 ${proj.github === "#" && proj.live === "#" ? "hidden" : ""}`}
+              >
+                <a href={proj.github} className={`text-blue-400 hover:underline ${proj.github === "#" ? "hidden" : ""}`}>
                   GitHub
                 </a>
-                <a href={proj.live} className="text-green-400 hover:underline">
+                <a href={proj.live} className={`text-green-400 hover:underline ${proj.live === "#" ? "hidden" : ""}`}>
                   Live
                 </a>
               </div>
@@ -212,6 +214,10 @@ export default function App() {
           </a>
         </div>
       </section>
+        {/* Footer */}
+        <footer className="py-6 text-center text-green-400 bg-gray-900">
+          Built with React & Tailwind CSS | &copy; {new Date().getFullYear()} Rounak Jaiswal
+        </footer>
     </div>
   );
 }
