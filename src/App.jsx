@@ -14,6 +14,8 @@ import {
   ZoomIn,
 } from "lucide-react";
 import emailjs from "emailjs-com";
+import { ToastContainer, toast } from 'react-toastify';
+  
 // const App = () => {
 
 // }
@@ -25,7 +27,7 @@ export default function App() {
   const [largeFont, setLargeFont] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [contactInfo, setContactInfo] = useState("");
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const projects = [
     {
       name: "IntelliPrep",
@@ -162,6 +164,8 @@ export default function App() {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  
+
   return (
     <div
       style={{ zoom: zoom }}
@@ -169,17 +173,18 @@ export default function App() {
         highContrast ? "bg-black text-yellow-300" : ""
       } ${largeFont ? "text-lg" : ""}`}
     >
+       <ToastContainer />
       <div className="fixed bottom-6 right-6 z-50" aria-label="Scroll Options">
         <div className="flex flex-col items-center gap-2">
           <CircleArrowUpIcon
-            className="text-purple-400"
+            className="text-purple-400 cursor-pointer"
             size={32}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Scroll to Top"
           />
 
           <CircleArrowDownIcon
-            className="text-purple-400"
+            className="text-purple-400 cursor-pointer"
             size={32}
             onClick={() =>
               window.scrollTo({
@@ -494,6 +499,8 @@ export default function App() {
 
       {/* Contact */}
       <section className="py-20 px-6 text-center">
+        {/*Add overlay when submit then hide it */}
+        {isSubmitting && <div className="fixed inset-0 bg-black opacity-50 z-10" />}
         <h2 className="text-4xl font-bold mb-6">Contact Me</h2>
         <form
           className="bg-gray-800 p-6 rounded-xl max-w-xl mx-auto"
@@ -505,6 +512,9 @@ export default function App() {
             }
             setError("");
             // You can add your send logic here
+            //set isSubmitting to true
+            setIsSubmitting(true);
+            
             emailjs
               .send(
                 "service_6dubp7a",
@@ -517,24 +527,34 @@ export default function App() {
                 "t-Zvtt0Lb5bS6FJn2"
               )
               .then(() => {
-                alert("Message sent!");
+                toast.success("Message sent!");
                 setMessage("");
+                setContactInfo("");
+              setIsSubmitting(false);
+
+                
               })
               .catch((error) => {
                 setError("Failed to send message.");
+              setIsSubmitting(false);
+
               });
-            alert("Message sent!");
-            setMessage("");
           }}
         >
           <div className="font-mono text-green-400 text-left mb-4">
+            &gt; Enter your contact information:
+            <input
+              className="w-full p-3 rounded bg-gray-900 text-white outline-none"
+              placeholder="Type your contact information"
+              value={contactInfo}
+              onChange={(e) => setContactInfo(e.target.value)}
+            />
+          </div>
+
+          <div className="font-mono text-green-400 text-left mb-4">
             &gt; Enter your message:
           </div>
-          <input
-            placeholder="Type your contact information"
-            value={contactInfo}
-            onChange={(e) => setContactInfo(e.target.value)}
-          />
+         
           <textarea
             className="w-full p-3 rounded bg-gray-900 text-white outline-none"
             rows={4}
@@ -548,7 +568,7 @@ export default function App() {
           {error && <div className="text-red-400 mt-2 text-left">{error}</div>}
           <button
             type="submit"
-            className="mt-4 bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg"
+            className="mt-4 bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg cursor-pointer"
           >
             Send
           </button>
