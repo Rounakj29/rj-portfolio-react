@@ -4,17 +4,27 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaLinkedin, FaEnvelope, FaGithub } from "react-icons/fa";
-import { ChevronDown, CircleArrowDown, CircleArrowDownIcon, CircleArrowUpIcon,Info, ZoomOut, ZoomIn } from "lucide-react";
-
+import {
+  ChevronDown,
+  CircleArrowDown,
+  CircleArrowDownIcon,
+  CircleArrowUpIcon,
+  Info,
+  ZoomOut,
+  ZoomIn,
+} from "lucide-react";
+import emailjs from "emailjs-com";
 // const App = () => {
 
 // }
 
 export default function App() {
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [highContrast, setHighContrast] = useState(false);
   const [largeFont, setLargeFont] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [contactInfo, setContactInfo] = useState("");
 
   const projects = [
     {
@@ -153,25 +163,35 @@ export default function App() {
   };
 
   return (
-    <div  
-        style={{ zoom: zoom }}
-        className={`bg-gray-900 text-white font-mono scroll-smooth break-words ${
+    <div
+      style={{ zoom: zoom }}
+      className={`bg-gray-900 text-white font-mono scroll-smooth break-words ${
         highContrast ? "bg-black text-yellow-300" : ""
-      } ${largeFont ? "text-lg" : ""}`}>
-        <div
-        className="fixed bottom-6 right-6 z-50"
-        aria-label="Scroll Options">
-          <div className="flex flex-col items-center gap-2">
-            <CircleArrowUpIcon className="text-green-600" size={28} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              aria-label="Scroll to Top"/>
-            
-            <CircleArrowDownIcon className="text-green-600" size={28}  onClick={() =>
-                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })
-              }
-              aria-label="Scroll to Bottom" />
-          </div>
+      } ${largeFont ? "text-lg" : ""}`}
+    >
+      <div className="fixed bottom-6 right-6 z-50" aria-label="Scroll Options">
+        <div className="flex flex-col items-center gap-2">
+          <CircleArrowUpIcon
+            className="text-purple-400"
+            size={32}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Scroll to Top"
+          />
+
+          <CircleArrowDownIcon
+            className="text-purple-400"
+            size={32}
+            onClick={() =>
+              window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth",
+              })
+            }
+            aria-label="Scroll to Bottom"
+          />
         </div>
-       {/* Accessibility Button */}
+      </div>
+      {/* Accessibility Button */}
       <div
         className="fixed bottom-6 left-6 z-50"
         aria-label="Accessibility Options"
@@ -184,7 +204,9 @@ export default function App() {
             menu.hidden = !menu.hidden;
           }}
         >
-          <span aria-hidden="true" role="img"><Info/></span>
+          <span aria-hidden="true" role="img">
+            <Info />
+          </span>
         </button>
         <div
           id="accessibility-menu"
@@ -210,34 +232,36 @@ export default function App() {
             />
             Large Font
           </label>
-          <div>
-           
-          </div>
+          <div></div>
           <div className="flex items-center gap-2 mb-2">
- <ZoomIn className="text-purple-400"  onClick={() => setZoom((z) => Math.min(z + 0.1, 2))}
-              aria-label="Zoom In"/>
+            <ZoomIn
+              className="text-purple-400"
+              onClick={() => setZoom((z) => Math.min(z + 0.1, 2))}
+              aria-label="Zoom In"
+            />
 
-          
-
-            <span className="text-gray-300"> <button
-              className="bg-gray-700 text-white px-2 py-1 rounded"
-              onClick={() => setZoom(1)}
-              aria-label="Reset Zoom"
-            >
-              Reset Zoom
-            </button></span>
-           <ZoomOut className="text-purple-400"  onClick={() => setZoom((z) => Math.max(z - 0.1, 0.5))}
-              aria-label="Zoom Out"/>
-           
+            <span className="text-gray-300">
+              {" "}
+              <button
+                className="bg-gray-700 text-white px-2 py-1 rounded"
+                onClick={() => setZoom(1)}
+                aria-label="Reset Zoom"
+              >
+                Reset Zoom
+              </button>
+            </span>
+            <ZoomOut
+              className="text-purple-400"
+              onClick={() => setZoom((z) => Math.max(z - 0.1, 0.5))}
+              aria-label="Zoom Out"
+            />
           </div>
-          
         </div>
       </div>
 
-
       {/* Hero */}
       <section className="h-screen flex flex-col items-center justify-center text-center px-6">
-        <motion.h1
+         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -329,11 +353,13 @@ export default function App() {
                   className={`text-blue-400 hover:underline ${
                     proj.github === "#" ? "hidden" : ""
                   }`}
+                  target="_blank"
                 >
                   GitHub
                 </a>
                 <a
                   href={proj.live}
+                  target="_blank"
                   className={`text-green-400 hover:underline ${
                     proj.live === "#" ? "hidden" : ""
                   }`}
@@ -349,40 +375,65 @@ export default function App() {
       {/* Experience */}
       <section id="experience" className="py-20 px-6">
         <h2 className="text-4xl font-bold text-center mb-12">Experience</h2>
-        <div className="max-w-5xl mx-auto space-y-10">
+        <div className="max-w-5xl mx-auto flex flex-col items-center relative">
           {experience.map((job, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-gray-800 p-6 rounded-2xl shadow-lg"
-            >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                <div>
-                  <h3 className="text-2xl font-semibold text-purple-400">
-                    {job.role}
-                  </h3>
-                  <div className="text-blue-300">{job.company}</div>
-                </div>
-                <div className="text-gray-400">{job.period}</div>
-              </div>
-              <div className="mt-4 space-y-6">
-                {job.projects.map((p, pIdx) => (
-                  <div key={pIdx}>
-                    <div className="font-semibold">{p.name}</div>
-                    <div className="text-sm text-blue-300">
-                      {p.tech.join(", ")}
-                    </div>
-                    <ul className="list-disc list-inside mt-2 text-gray-300 space-y-1">
-                      {p.bullets.map((b, bIdx) => (
-                        <li key={bIdx}>{b}</li>
-                      ))}
-                    </ul>
+            <React.Fragment key={idx}>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full"
+              >
+                {/* ...existing job content... */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-purple-400">
+                      {job.role}
+                    </h3>
+                    <div className="text-blue-300">{job.company}</div>
                   </div>
-                ))}
-              </div>
-            </motion.div>
+                  <div className="text-gray-400">{job.period}</div>
+                </div>
+                <div className="mt-4 space-y-6">
+                  {job.projects.map((p, pIdx) => (
+                    <div key={pIdx}>
+                      <div className="font-semibold">{p.name}</div>
+                      <div className="text-sm text-blue-300">
+                        {p.tech.join(", ")}
+                      </div>
+                      <ul className="list-disc list-inside mt-2 text-gray-300 space-y-1">
+                        {p.bullets.map((b, bIdx) => (
+                          <li key={bIdx}>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+              {/* Connector Trail */}
+              {idx < experience.length - 1 && (
+                <motion.div
+                  className="flex flex-col items-center"
+                  initial={{ opacity: 0, scaleY: 0.5 }}
+                  whileInView={{ opacity: 1, scaleY: 1 }}
+                  transition={{ duration: 0.6, type: "spring" }}
+                >
+                  <motion.div
+                    className="w-1 h-12 bg-purple-400 my-2 rounded-full"
+                    initial={{ scaleY: 0 }}
+                    whileInView={{ scaleY: 1 }}
+                    transition={{ duration: 0.6, type: "spring" }}
+                    style={{ originY: 0 }}
+                  />
+                  <motion.div
+                    className="w-3 h-3 bg-purple-400 rounded-full mb-2"
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ duration: 0.4, type: "spring" }}
+                  />
+                </motion.div>
+              )}
+            </React.Fragment>
           ))}
         </div>
       </section>
@@ -444,21 +495,64 @@ export default function App() {
       {/* Contact */}
       <section className="py-20 px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">Contact Me</h2>
-        <div className="bg-gray-800 p-6 rounded-xl max-w-xl mx-auto" hidden>
+        <form
+          className="bg-gray-800 p-6 rounded-xl max-w-xl mx-auto"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!message.trim()) {
+              setError("Message is required.");
+              return;
+            }
+            setError("");
+            // You can add your send logic here
+            emailjs
+              .send(
+                "service_6dubp7a",
+                "template_ssgt4vb",
+                {
+                  user_name: contactInfo,
+                  time: new Date().toISOString(),
+                  message: message,
+                }, // Add other fields as needed
+                "t-Zvtt0Lb5bS6FJn2"
+              )
+              .then(() => {
+                alert("Message sent!");
+                setMessage("");
+              })
+              .catch((error) => {
+                setError("Failed to send message.");
+              });
+            alert("Message sent!");
+            setMessage("");
+          }}
+        >
           <div className="font-mono text-green-400 text-left mb-4">
             &gt; Enter your message:
           </div>
+          <input
+            placeholder="Type your contact information"
+            value={contactInfo}
+            onChange={(e) => setContactInfo(e.target.value)}
+          />
           <textarea
             className="w-full p-3 rounded bg-gray-900 text-white outline-none"
             rows={4}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              if (error) setError("");
+            }}
             placeholder="Type your message here..."
           />
-          <button className="mt-4 bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg">
+          {error && <div className="text-red-400 mt-2 text-left">{error}</div>}
+          <button
+            type="submit"
+            className="mt-4 bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg"
+          >
             Send
           </button>
-        </div>
+        </form>
         <div className="mt-6 flex justify-center gap-6">
           <a href="mailto:rounakkjaiswal@gmail.com">
             <FaEnvelope size={28} />
@@ -472,7 +566,7 @@ export default function App() {
         </div>
       </section>
       {/* Footer */}
-      <footer className="py-6 text-center text-green-400 bg-gray-900">
+      <footer className="py-6 text-center bg-gray-900">
         Built with React & Tailwind CSS | &copy; {new Date().getFullYear()}{" "}
         Rounak Jaiswal
       </footer>
